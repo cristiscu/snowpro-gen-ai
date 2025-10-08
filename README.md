@@ -1,2 +1,3 @@
-# snowpro-gen-ai
-All demo code for my "SnowPro Specialty: Gen AI Exam Preparation" Udemy course
+# SnowPro Specialty: Gen AI Certification Exam
+
+All code for my Udemy course **SnowPro Specialty: Gen AI Certification Exam**.
