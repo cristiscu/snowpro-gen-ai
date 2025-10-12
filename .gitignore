@@ -15,3 +15,5 @@ venv/
 **/node_modules
 **/package-lock.json
 **/.streamlit/secrets.toml
+.data/BooksDatasetClean.csv
+.data/airbnb_embeddings.json
