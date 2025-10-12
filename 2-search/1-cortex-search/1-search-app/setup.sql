@@ -10,7 +10,8 @@ CREATE OR REPLACE WAREHOUSE cortex_search_tutorial_wh WITH
 -- DROP DATABASE IF EXISTS cortex_search_tutorial_db;
 -- DROP WAREHOUSE IF EXISTS cortex_search_tutorial_wh;
 
--- upload .data/airbnb_embeddings.json
+-- download https://huggingface.co/datasets/MongoDB/airbnb_embeddings/blob/main/airbnb_embeddings.json --> in .data/
+-- manually upload .data/airbnb_embeddings.json in new table
 
 CREATE OR REPLACE CORTEX SEARCH SERVICE cortex_search_tutorial_db.public.airbnb_svc
 ON listing_text

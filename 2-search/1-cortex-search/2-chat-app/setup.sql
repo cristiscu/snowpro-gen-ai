@@ -12,8 +12,8 @@ USE WAREHOUSE cortex_search_tutorial_wh;
 -- DROP DATABASE IF EXISTS cortex_search_tutorial_db;
 -- DROP WAREHOUSE IF EXISTS cortex_search_tutorial_wh;
 
+-- download https://www.kaggle.com/datasets/elvinrustam/books-dataset?select=BooksDatasetClean.csv --> in .data/
 -- upload .data/BooksDatasetClean.csv in the stage below
--- https://www.kaggle.com/datasets/elvinrustam/books-dataset
 CREATE OR REPLACE STAGE books_data_stage
     DIRECTORY = (ENABLE = TRUE)
     ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');

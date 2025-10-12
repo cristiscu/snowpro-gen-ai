@@ -12,7 +12,7 @@ CREATE OR REPLACE WAREHOUSE cortex_search_tutorial_wh WITH
 -- DROP DATABASE IF EXISTS cortex_search_tutorial_db;
 -- DROP WAREHOUSE IF EXISTS cortex_search_tutorial_wh;
 
--- then upload PDF files from .data/fomc_minutes/
+-- then upload PDF files from .data/fomc_minutes/ folder
  CREATE OR REPLACE STAGE cortex_search_tutorial_db.public.fomc
     DIRECTORY = (ENABLE = TRUE)
     ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
