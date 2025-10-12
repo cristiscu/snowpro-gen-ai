@@ -8,6 +8,7 @@ USE SCHEMA GEN_AI_FSI.asset_management;
 CREATE STAGE IF NOT EXISTS gen_ai_fsi.asset_management.fed_logic
     DIRECTORY = (ENABLE = TRUE);
 
+-- then upload PDF files from .data/FOMC_DOCS
 --create stage fed_pdf;
 CREATE STAGE gen_ai_fsi.asset_management.FED_PDF 
     DIRECTORY = ( ENABLE = true ) 
