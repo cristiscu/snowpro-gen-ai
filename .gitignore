@@ -17,3 +17,4 @@ venv/
 **/.streamlit/secrets.toml
 .data/BooksDatasetClean.csv
 .data/airbnb_embeddings.json
+.data/consultation.wav
