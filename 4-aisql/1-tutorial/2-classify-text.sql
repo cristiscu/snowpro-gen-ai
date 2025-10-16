@@ -1,9 +1,11 @@
 -- https://docs.snowflake.com/en/sql-reference/functions/classify_text-snowflake-cortex
 
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT('One day I will see the world', ['travel', 'cooking']);
+SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
+  'One day I will see the world',
+  ['travel', 'cooking']);
 
-CREATE OR REPLACE TEMPORARY TABLE text_classification_table AS
-SELECT 'France' AS input, ['North America', 'Europe', 'Asia'] AS classes
+CREATE OR REPLACE TEMPORARY TABLE text_classification_table
+AS SELECT 'France' AS input, ['North America', 'Europe', 'Asia'] AS classes
 UNION ALL
 SELECT 'Singapore', ['North America', 'Europe', 'Asia']
 UNION ALL
@@ -11,18 +13,13 @@ SELECT 'one day I will see the world', ['travel', 'cooking', 'dancing']
 UNION ALL
 SELECT 'my lobster bisque is second to none', ['travel', 'cooking', 'dancing'];
 
-SELECT input,
-       classes,
-       SNOWFLAKE.CORTEX.CLASSIFY_TEXT(input, classes)['label'] as classification
+SELECT input, classes, SNOWFLAKE.CORTEX.CLASSIFY_TEXT(input, classes)['label'] as classification
 FROM text_classification_table;
 
 SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
   'When I am not at work, I love creating recipes using every day ingredients',
   ['travel', 'cooking', 'fitness'],
-  {
-    'task_description': 'Return a classification of the Hobby identified in the text'
-  }
-);
+  {'task_description': 'Return a classification of the Hobby identified in the text'});
 
 SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
   'I love running every morning before the world wakes up',
@@ -41,7 +38,7 @@ SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
     }],
   {'task_description': 'Return a classification of the Hobby identified in the text'})
 
-  SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
+SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
   'I love running every morning before the world wakes up',
   [{
     'label': 'travel',
@@ -55,5 +52,3 @@ SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
     'description': 'Hobbies related to being active and healthy'
     }],
   {'task_description': 'Return a classification of the Hobby identified in the text'})
-
-  

@@ -1,0 +1,14 @@
+# Cortex (LLM) REST API - Embed examples
+# https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-rest-api#python-api-example-request
+
+curl --location "<account_url>/api/v2/cortex/inference:embed" \
+--header 'X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer <token>" \
+--data '{
+"text": ["foo", "bar"],
+"model": "e5-base-v2"
+}'
+
+

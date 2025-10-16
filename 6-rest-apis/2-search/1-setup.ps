@@ -1,0 +1,93 @@
+# Named scoring profiles
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#named-scoring-profiles
+
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "technology",
+  "columns": ["DOCUMENT_CONTENTS", "LIKES", "COMMENTS"],
+  "scoring_profile": "heavy_comments_with_likes,
+  "limit": 10
+}'
+
+# Filter Example - Simple query with an equality filter
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#filter-examples
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "technology",
+  "columns": ["DOCUMENT_CONTENTS", "LIKES"],
+  "filter": {"@eq": {"REGION": "US"}},
+  "limit": 5
+}'
+
+# Filter Example - Range filter
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#range-filter
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "business",
+  "columns": ["DOCUMENT_CONTENTS", "LIKES", "COMMENTS"],
+  "filter": {"@and": [
+    {"@gte": {"LIKES": 50}},
+    {"@lte": {"COMMENTS": 50}}
+  ]},
+  "limit": 10
+}'
+
+# Scoring examples - Numeric Boost
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#scoring-examples
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "technology",
+  "columns": ["DOCUMENT_CONTENTS", "LIKES", "COMMENTS"],
+  "scoring_config": {
+    "functions": {
+      "numeric_boosts": [
+        {"column": "comments", "weight": 2},
+        {"column": "likes", "weight": 1}
+      ]
+    }
+  }
+}'
+
+# Scoring examples - Time Decay
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#time-decays
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "technology",
+  "columns": ["DOCUMENT_CONTENTS", "LAST_MODIFIED_TIMESTAMP"],
+  "scoring_config": {
+    "functions": {
+      "time_decays": [
+        {"column": "LAST_MODIFIED_TIMESTAMP", "weight": 1, "limit_hours": 240, "now": "2024-04-23T00:00:00.000-08:00"}
+      ]
+    }
+  }
+}'
+
+# Scoring examples - Disabling reranking
+# https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#disabling-reranking
+curl --location https://<ACCOUNT_URL>/api/v2/databases/<DB_NAME>/schemas/<SCHEMA_NAME>/cortex-search-services/<SERVICE_NAME>:query \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header "Authorization: Bearer $PAT" \
+--data '{
+  "query": "technology",
+  "columns": ["DOCUMENT_CONTENTS", "LAST_MODIFIED_TIMESTAMP"],
+  "scoring_config": {
+    "reranker": "none"
+  }
+}'
