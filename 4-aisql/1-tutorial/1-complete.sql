@@ -1,11 +1,14 @@
+-- SNOWFLAKE.CORTEX.COMPLETE, for text+images (multimodal)
 -- https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex
+-- https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex-multimodal
 
 SELECT SNOWFLAKE.CORTEX.COMPLETE('snowflake-arctic', 'What are large language models?');
 
 SELECT SNOWFLAKE.CORTEX.COMPLETE(
     'openai-gpt-4.1',
-        CONCAT('Critique this review in bullet points: <review>', content, '</review>')
-) FROM reviews LIMIT 10;
+    CONCAT('Critique this review in bullet points: <review>', content, '</review>'))
+FROM reviews
+LIMIT 10;
 
 SELECT SNOWFLAKE.CORTEX.COMPLETE(
     'claude-4-sonnet ',
