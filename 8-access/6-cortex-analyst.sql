@@ -1,15 +1,3 @@
--- limit access using the Cortex Analyst user role
--- https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#access-control-requirements
-REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE analyst;
-
-USE ROLE ACCOUNTADMIN;
-CREATE ROLE cortex_user_role;
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_analyst_user_role;
-
-GRANT ROLE cortex_analyst_user_role TO USER example_user;
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_ANALYST_USER TO ROLE analyst;
-
--- ------------------------------------------------------------------
 -- Cortex Analyst example
 -- https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#cortex-analyst-example
 CREATE DATABASE semantic_model;
