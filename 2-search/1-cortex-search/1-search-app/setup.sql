@@ -1,30 +1,29 @@
-CREATE DATABASE IF NOT EXISTS cortex_search_tutorial_db;
+-- Tutorial 1 (inspired from): Build a simple search application with Cortex Search
+-- https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-1-search
+USE DATABASE test;
+CREATE OR REPLACE SCHEMA test.airbnb;
 
-CREATE OR REPLACE WAREHOUSE cortex_search_tutorial_wh WITH
-     WAREHOUSE_SIZE='X-SMALL'
-     AUTO_SUSPEND = 120
-     AUTO_RESUME = TRUE
-     INITIALLY_SUSPENDED=TRUE;
+-- download https://huggingface.co/datasets/MongoDB/airbnb_embeddings/blob/main/airbnb_embeddings.json
+-- manually upload JSON file into a new airbnb_listings table, using the Snowsight wizard:
+--    uncheck Load as a single variant column
+--    uncheck the image_embeddings, images, and text_embeddings columns
+--    change datatype of the amenities field to be ARRAY type
 
--- to cleanup at the end
--- DROP DATABASE IF EXISTS cortex_search_tutorial_db;
--- DROP WAREHOUSE IF EXISTS cortex_search_tutorial_wh;
-
--- download https://huggingface.co/datasets/MongoDB/airbnb_embeddings/blob/main/airbnb_embeddings.json --> in .data/
--- manually upload .data/airbnb_embeddings.json in new table
-
-CREATE OR REPLACE CORTEX SEARCH SERVICE cortex_search_tutorial_db.public.airbnb_svc
-ON listing_text
-ATTRIBUTES room_type, amenities
-WAREHOUSE = cortex_search_tutorial_wh
-TARGET_LAG = '1 hour'
+CREATE OR REPLACE CORTEX SEARCH SERVICE search
+    ON listing_text
+    ATTRIBUTES room_type, amenities
+    WAREHOUSE = compute_wh
+    TARGET_LAG = '1 hour'
 AS
-    SELECT
-        room_type,
-        amenities,
-        price,
-        cancellation_policy,
+    SELECT room_type, amenities, price, cancellation_policy,
         ('Summary\n\n' || summary || '\n\n\nDescription\n\n'
             || description || '\n\n\nSpace\n\n' || space) as listing_text
-    FROM
-        cortex_search_tutorial_db.public.airbnb_listings;
+    FROM airbnb_listings;
+DESC CORTEX SEARCH SERVICE search;
+
+SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW('search',
+    '{
+        "query": "test query",
+        "columns": ["listing_text"],
+        "limit": 3
+    }');

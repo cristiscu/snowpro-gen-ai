@@ -3,8 +3,8 @@ tables:
   - name: daily_revenue
     description: Daily total revenue, aligned with daily "Cost of Goods Sold" (COGS), and forecasted revenue.
     base_table:
-      database: cortex_analyst_demo
-      schema: revenue_timeseries
+      database: test
+      schema: ts
       table: daily_revenue
     primary_key:
       columns:
@@ -59,8 +59,8 @@ tables:
   - name: product
     description: Product dimension table with unique product identifiers and attributes.
     base_table:
-      database: cortex_analyst_demo
-      schema: revenue_timeseries
+      database: test
+      schema: ts
       table: product_dim
     primary_key:
       columns:
@@ -83,8 +83,8 @@ tables:
   - name: region
     description: Region dimension table with unique region identifiers and geographic attributes.
     base_table:
-      database: cortex_analyst_demo
-      schema: revenue_timeseries
+      database: test
+      schema: ts
       table: region_dim
     primary_key:
       columns:
@@ -106,14 +106,14 @@ tables:
 
   - name: product_dimension
     base_table:
-      database: cortex_analyst_demo
-      schema: revenue_timeseries
+      database: test
+      schema: ts
       table: product_dim
 
     dimensions:
       - name: product_line
         expr: product_line
-        cortex_search_service_name: product_line_search_service
+        cortex_search_service_name: ts_search
         data_type: varchar
 
 
