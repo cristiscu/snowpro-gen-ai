@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang=“en”>
+<body>
+  <form action="{{ url_for("ui") }}" method="post">
+    <label for="input">Celsius:<label><br>
+    <input type="text" id="input" name="input" value="{{ celsius }}"><br>
+  </form>
+  <div>Fahrenheit:</div>
+  {{ fahrenheit }}
+</body>
+</html>
