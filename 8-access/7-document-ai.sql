@@ -9,11 +9,10 @@ CREATE DATABASE doc_ai_db;
 CREATE SCHEMA doc_ai_db.doc_ai_schema;
 CREATE WAREHOUSE doc_ai_wh;
 
-GRANT USAGE, OPERATE ON WAREHOUSE doc_ai_wh TO ROLE doc_ai_role;
-
 GRANT USAGE ON DATABASE doc_ai_db TO ROLE doc_ai_role;
 GRANT USAGE ON SCHEMA doc_ai_db.doc_ai_schema TO ROLE doc_ai_role;
 GRANT CREATE STAGE ON SCHEMA doc_ai_db.doc_ai_schema TO ROLE doc_ai_role;
+GRANT USAGE, OPERATE ON WAREHOUSE doc_ai_wh TO ROLE doc_ai_role;
 
 GRANT CREATE SNOWFLAKE.ML.DOCUMENT_INTELLIGENCE ON SCHEMA doc_ai_db.doc_ai_schema TO ROLE doc_ai_role;
 GRANT CREATE MODEL ON SCHEMA doc_ai_db.doc_ai_schema TO ROLE doc_ai_role;
