@@ -94,19 +94,6 @@ select AI_EXTRACT(
 
 -- extract signature status
 SELECT AI_EXTRACT(
-    file => TO_FILE('@db.schema.stage','document.pdf'),
+    file => TO_FILE('@stage1', 'spool/inspection.pdf'),
     responseFormat => [['signature', 'Is this document signed?']]
-);
-
--- Extraction using a fine-tuned arctic-extract model
--- https://docs.snowflake.com/en/sql-reference/functions/ai_extract#extraction-using-a-fine-tuned-arctic-extract-model
-SELECT AI_EXTRACT(
-  model => 'db.schema.my_tuned_model',
-  file => TO_FILE('@db.schema.files','document.pdf')
-);
-
-SELECT AI_EXTRACT(
-  model => 'db.schema.my_tuned_model',
-  file => TO_FILE('@db.schema.files','document.pdf'),
-  responseFormat => [['name', 'What is the first name of the employee?'], ['city', 'Where does the employee live?']]
-);
+) as json;
