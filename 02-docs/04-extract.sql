@@ -105,8 +105,8 @@ select AI_EXTRACT(
 {
   "response": {
     "top_table": {
-      "result": [ "Good", "Good", "Good", "Good", "Good", "Good", "Good", "Good" ],
-      "step": [ "Injection Unit", "Mold Clamping Unit", "Hydraulic System", "Temperature Control System", ... ]
+      "step": [ "Injection Unit", "Mold Clamping Unit", "Hydraulic System", "Temperature Control System", ... ],
+      "result": [ "Good", "Good", "Good", "Good", "Good", "Good", "Good", "Good" ]
     } },
   "scoring": { "scores": { "top_table": { "score": 0.95 } } },
   "error": null
@@ -148,4 +148,5 @@ select SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
 [{
   "answer": "san francisco",
   "score": 0.0000016968828
-}]*/
+}]
+*/

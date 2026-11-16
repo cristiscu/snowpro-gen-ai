@@ -17,6 +17,16 @@ select * from directory(@stage1);
 alter stage stage1 refresh;
 select * from directory(@stage1);
 
+-- extract doc info directly + manually
+SELECT AI_EXTRACT(
+    file => TO_FILE('@stage1', 'spool/inspection.pdf'),
+    responseFormat => {
+        'machine_name': 'What is the inspected machine name?',
+        'serial_number': 'What is the serial number of the inspection?',
+        'inspection_grade': 'What was the inspection grade?'
+    }) AS extracted_data
+FROM DIRECTORY(@stage1);
+
 -- extract doc info into table
 CREATE TABLE docs
 AS SELECT RELATIVE_PATH AS file_name,
@@ -62,8 +72,9 @@ SELECT RELATIVE_PATH,
             'inspection_grade': 'What was the inspection grade?'
         }),
     CURRENT_TIMESTAMP()
-FROM stream1
-WHERE METADATA$ACTION = 'INSERT';
+FROM stream1;
+-- WHERE METADATA$ACTION = 'INSERT';
 
 ALTER TASK task1 RESUME;
--- ALTER TASK task1 SUSPEND;
+ALTER TASK task1 SUSPEND;
+DROP SCHEMA test.auto;
