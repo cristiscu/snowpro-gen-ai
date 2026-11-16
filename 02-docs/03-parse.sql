@@ -17,22 +17,23 @@ select AI_PARSE_DOCUMENT(
 
 -- try also w/ inspection.png --> same result
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/inspection.pdf'),
+    TO_FILE('@stage1', 'spool/inspection.png'),
     {'mode': 'OCR'},
     true) as json,
-    json:content::STRING as content;
+    json:value.content::STRING as content;
 /*
 {
-  "content": "SkiGear Co.
+  "value": {
+     "content": "SkiGear Co.
         1661 Mesa Drive
         Las Vegas, Nevada
         123-555-5555
         EQUIPMENT INSPECTION
         MACHINE SERIAL NUMBER INSPECTION GRADE
         Injection Molder SGMM-12345 PASS
-        INSPECTION SUMMARY...",
+        INSPECTION SUMMARY..." },
   "metadata": { "pageCount": 1, "processedPageCount": 1 },
-  "errors": none
+  "errors": null
 }
 */
 

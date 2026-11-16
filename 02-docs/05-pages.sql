@@ -1,5 +1,6 @@
 -- Multi-Page Document Parsing with AI_PARSE_DOCUMENT
 -- in OCR/LAYOUT/AGENTIC modes, for multi-page PDF/DOCX/PPTX staged docs
+-- https://cristian-70480.medium.com/ai-parse-documents-for-specific-pages-and-page-ranges-0b3183cbac69
 use test.public;
 
 -- =====================================================================
