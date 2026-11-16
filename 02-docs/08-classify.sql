@@ -1,9 +1,24 @@
 use test.public;
 
+-- legacy function (may not work in new accounts!)
+SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
+    'One day I will see the world',
+    ['travel', 'cooking']
+) as json;
+/*
+{ "label": "travel" }
+*/
+
+-- ======================================================================
+-- AI_CLASIFY
+
 SELECT AI_CLASSIFY(
     'One day I will see the world',
     ['travel', 'cooking']
 ) as json;
+/*
+{ "labels": [ "travel" ] }
+*/
 
 SELECT AI_CLASSIFY(
     'One day I will see the world and learn to cook my favorite dishes',

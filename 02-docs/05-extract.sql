@@ -1,14 +1,23 @@
--- Value Extraction with AI_EXTRACT
--- for PNG/PDF staged docs with tables/forms
+-- Text Value Extraction with AI_EXTRACT
 use test.public;
 
--- https://docs.snowflake.com/en/sql-reference/functions/extract_answer-snowflake-cortex
-
-SELECT SNOWFLAKE.CORTEX.EXTRACT_ANSWER(review_content,
-    'What dishes does this review mention?')
-FROM reviews LIMIT 10;
-
 -- entity extraction (individual key values) from text
+select AI_EXTRACT(
+    text => 'John Smith lives in San Francisco and works for Snowflake',
+    responseFormat => [
+        'What is the first name of the employee?',
+        'What is the address of the employee?' ]
+) as json;
+/*
+{
+  "response": {
+    "What is the address of the employee?": "San Francisco",
+    "What is the first name of the employee?": "John"
+  },
+  "error": null
+}
+*/
+
 select AI_EXTRACT(
     text => 'John Smith lives in San Francisco and works for Snowflake',
     responseFormat => {
@@ -17,7 +26,10 @@ select AI_EXTRACT(
 ) as json;
 /*
 {
-  "response": { "city": "San Francisco", "name": "John" },
+  "response": {
+    "city": "San Francisco",
+    "name": "John"
+  },
   "error": null
 }
 */
@@ -33,8 +45,11 @@ select AI_EXTRACT(
 ) as json;
 /*
 {
-  "response": { "grade": "PASS", "serial": "SGMM-12345" },
-  "scoring": { "scores": { "grade": { "score": 0.95 }, "serial": { "score": 0.95 } } },
+  "response": { "serial": "SGMM-12345", "grade": "PASS" },
+  "scoring": { "scores": {
+    "grade": { "score": 0.95 },
+    "serial": { "score": 0.95 }
+  } },
   "error": null
 }
 */
@@ -103,3 +118,34 @@ SELECT AI_EXTRACT(
     file => TO_FILE('@stage1', 'spool/inspection.pdf'),
     responseFormat => [['signature', 'Is this document signed?']]
 ) as json;
+
+-- ==============================================================================
+-- SNOWFLAKE.CORTEX.EXTRACT_ANSWER (legacy function, you may get an error!)
+
+select SNOWFLAKE.CORTEX.EXTRACT_ANSWER($$ I am a new customer for less than a year and I have never had to visit a branch this much in my lifetime. I've had my banking card locked THREE times for fraud. No fraudulent payments were made, nor anything else beside trying to put my card in my wallet on my phone. Since I live over an hour away from the nearest branch, they gave me a virtual appointment to unlock my card, and never gave my the joining code so I couldn't access it. I can't make any payments on my credit card because I can't access my online banking, so now they're adding interest to it. And as this is the third time my account was frozen for fraud, it has also been going on for TWO MONTHS. I'm canceling both my debit and credit cards ASAP when I can access a branch which I'll either have to miss work for as a contract worker, or go to my nearest city, carless, which is again over an hour away, 2 hours by bus, on the weekend.$$, 
+    'why is this customer not paying his bills?') as json;
+/*
+[{
+  "answer": "i can ' t make any payments on my credit card because i can ' t access my online banking",
+  "score": 0.41426617
+}]
+*/
+
+select SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
+    'John Smith lives in San Francisco and works for Snowflake',
+    'What is the first name of the employee?') as json;
+/*
+[{
+  "answer": "snowflake",
+  "score": 4.310699700000000e-11
+}]
+*/
+
+select SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
+    'John Smith lives in San Francisco and works for Snowflake',
+    'What is the address of the employee?') as json;
+/*
+[{
+  "answer": "san francisco",
+  "score": 0.0000016968828
+}]*/

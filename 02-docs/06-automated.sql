@@ -1,4 +1,28 @@
 -- Automated Pipeline with Stream and Task
+use test.public;
+
+SELECT AI_EXTRACT(
+    file => TO_FILE('@stage1', 'spool/inspection.pdf'),
+    responseFormat => {
+        'machine_name': 'What is the inspected machine name?',
+        'serial_number': 'What is the serial number of the inspection?',
+        'inspection_grade': 'What was the inspection grade?'
+    }
+) AS extracted_data;
+/*
+{
+  "response": {
+    "machine_name": "Injection Molder",
+    "serial_number": "SGMM-12345",
+    "inspection_grade": "PASS"
+  },
+  "error": null
+}
+*/
+
+-- =======================================================
+-- automated pipeline/workflow
+
 create or replace schema test.auto;
 use test.auto;
 
@@ -45,7 +69,7 @@ FROM docs;
 
 -- ===================================================================
 
--- "Copy full path" of a file from /spool and replace below
+-- "Copy full path" of a file from /.spool and replace below
 list snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/2-docs/spool/inspection.pdf;
 copy files into @stage1/
     from snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/2-docs/spool/inspection.pdf;

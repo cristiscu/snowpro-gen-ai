@@ -1,8 +1,6 @@
 -- Basic Document Parsing with AI_PARSE_DOCUMENT
 use test.public;
 
-list @stage1;
-
 -- ==================================================================
 -- extract text --> as text/markdown
 
@@ -20,7 +18,8 @@ select AI_PARSE_DOCUMENT(
 -- try also w/ inspection.png --> same result
 select AI_PARSE_DOCUMENT(
     TO_FILE('@stage1', 'spool/inspection.pdf'),
-    {'mode': 'OCR'}) as json,
+    {'mode': 'OCR'},
+    true) as json,
     json:content::STRING as content;
 /*
 {
@@ -32,7 +31,8 @@ select AI_PARSE_DOCUMENT(
         MACHINE SERIAL NUMBER INSPECTION GRADE
         Injection Molder SGMM-12345 PASS
         INSPECTION SUMMARY...",
-  "metadata": { "pageCount": 1, "processedPageCount": 1 }
+  "metadata": { "pageCount": 1, "processedPageCount": 1 },
+  "errors": none
 }
 */
 
@@ -108,3 +108,6 @@ select AI_PARSE_DOCUMENT(
 }
 */
 
+-- legacy function (may not work in new accounts!)
+select SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+    @stage1, 'spool/inspection.pdf', {'mode': 'OCR'}) as json;

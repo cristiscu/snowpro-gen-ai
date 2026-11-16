@@ -16,8 +16,8 @@ remove @stage1;
 show workspaces in account;
 
 -- "Copy full path" of a file from /.spool and replace below
-list snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/2-docs/.spool/;
+list snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/.spool/;
 copy files into @stage1/spool/
-    from snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/2-docs/.spool/;
+    from snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/.spool/;
 list @stage1;
 
