@@ -1,16 +1,5 @@
+-- Classify text/image/doc into Categories
 use test.public;
-
--- legacy function (may not work in new accounts!)
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-    'One day I will see the world',
-    ['travel', 'cooking']
-) as json;
-/*
-{ "label": "travel" }
-*/
-
--- ======================================================================
--- AI_CLASIFY
 
 SELECT AI_CLASSIFY(
     'One day I will see the world',
@@ -21,11 +10,23 @@ SELECT AI_CLASSIFY(
 */
 
 SELECT AI_CLASSIFY(
-    'One day I will see the world and learn to cook my favorite dishes',
-    ['travel', 'cooking', 'reading', 'driving'],
+    TO_FILE('@stage1', 'spool/inspection.pdf'),
+    ['invoice', 'contract', 'lab_report', 'signed']
+) as json;
+/*
+{ "labels": [ "lab_report" ] }
+*/
+
+SELECT AI_CLASSIFY(
+    TO_FILE('@stage1', 'spool/inspection.png'),
+    ['invoice', 'contract', 'lab_report', 'signed'],
     {'output_mode': 'multi'}
 ) as json;
+/*
+{ "labels": [ "lab_report", "signed" ]}
+*/
 
+-- with better instructions
 SELECT AI_CLASSIFY(
     'One day I will see the world and learn to cook my favorite dishes',
     [
@@ -43,111 +44,22 @@ SELECT AI_CLASSIFY(
         }]
     }
 ) as json;
+/*
+{ "labels": [ "travel", "cooking" ] }
+*/
 
-SELECT AI_CLASSIFY(
-    TO_FILE(file_url),
-    ['invoice', 'contract', 'lab_report']
+-- for multiple docs (PDFs)
+SELECT RELATIVE_PATH, AI_CLASSIFY(
+    TO_FILE('@stage1', RELATIVE_PATH),
+    ['invoice', 'contract', 'lab_report']):labels[0]::STRING AS category
+FROM DIRECTORY(@stage1)
+WHERE RELATIVE_PATH like '%.pdf';
+
+-- legacy function (may not work in new accounts!)
+SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
+    'One day I will see the world',
+    ['travel', 'cooking']
 ) as json;
-
--- =============================================================================
--- multiple docs
-
--- classify documents
--- https://docs.snowflake.com/en/sql-reference/functions/ai_classify#ai_classify-documents
-WITH staged_docs AS
-    (SELECT TO_FILE(file_url) AS doc FROM DIRECTORY(@my_doc_stage))
-SELECT doc, AI_CLASSIFY(doc,
-    ['invoice', 'contract', 'lab_report']):labels AS classification
-FROM staged_docs;
-
--- classify images from folder
--- https://docs.snowflake.com/en/sql-reference/functions/ai_classify#ai_classify-images
-WITH food_pictures AS
-    (SELECT TO_FILE(file_url) AS img FROM DIRECTORY(@file_stage))
-SELECT *, AI_CLASSIFY(img,
-    ['dessert', 'drink', 'main dish', 'side dish']):labels AS classification
-FROM food_pictures;
-
-WITH food_pictures AS (
-    SELECT TO_FILE(file_url) AS img FROM DIRECTORY(@file_stage))
-SELECT *, AI_CLASSIFY(
-    PROMPT('Please help me classify the food within this image {0}', img),
-    ['dessert', 'drink', 'main dish', 'side dish']):labels AS classification
-FROM food_pictures;
-
--- classification from TABLE
--- https://docs.snowflake.com/en/sql-reference/functions/ai_classify#ai_classify-text
-CREATE OR REPLACE TEMPORARY TABLE text_classification_table AS
-SELECT 'France' AS input, ['North America', 'Europe', 'Asia'] AS classes
-UNION ALL
-SELECT 'Singapore', ['North America', 'Europe', 'Asia']
-UNION ALL
-SELECT 'one day I will see the world', ['travel', 'cooking', 'dancing']
-UNION ALL
-SELECT 'my lobster bisque is second to none', ['travel', 'cooking', 'dancing'];
-
-SELECT input, classes,
-    AI_CLASSIFY(input, classes):labels AS classification
-FROM text_classification_table;
-
-
-
-
-
-
-
-
--- https://docs.snowflake.com/en/sql-reference/functions/classify_text-snowflake-cortex
-
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-  'One day I will see the world',
-  ['travel', 'cooking']);
-
-CREATE OR REPLACE TEMPORARY TABLE text_classification_table
-AS SELECT 'France' AS input, ['North America', 'Europe', 'Asia'] AS classes
-UNION ALL
-SELECT 'Singapore', ['North America', 'Europe', 'Asia']
-UNION ALL
-SELECT 'one day I will see the world', ['travel', 'cooking', 'dancing']
-UNION ALL
-SELECT 'my lobster bisque is second to none', ['travel', 'cooking', 'dancing'];
-
-SELECT input, classes, SNOWFLAKE.CORTEX.CLASSIFY_TEXT(input, classes)['label'] as classification
-FROM text_classification_table;
-
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-  'When I am not at work, I love creating recipes using every day ingredients',
-  ['travel', 'cooking', 'fitness'],
-  {'task_description': 'Return a classification of the Hobby identified in the text'});
-
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-  'I love running every morning before the world wakes up',
-  [{
-    'label': 'travel',
-    'description': 'Hobbies related to going from one place to another',
-    'examples': ['I like flying to Europe', 'Every summer we go to Italy' , 'I love traveling to learn new cultures']
-  },{
-    'label': 'cooking',
-    'description': 'Hobbies related to preparing food',
-    'examples': ['I like learning about new ingredients', 'You must bring your soul to the recipe' , 'Baking is my therapy']
-    },{
-    'label': 'fitness',
-    'description': 'Hobbies related to being active and healthy',
-    'examples': ['I cannot live without my Strava app', 'Running is life' , 'I go to the Gym every day']
-    }],
-  {'task_description': 'Return a classification of the Hobby identified in the text'})
-
-SELECT SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-  'I love running every morning before the world wakes up',
-  [{
-    'label': 'travel',
-    'description': 'Hobbies related to going from one place to another',
-    'examples': ['I like flying to Europe']
-  },{
-    'label': 'cooking',
-    'examples': ['I like learning about new ingredients', 'You must bring your soul to the recipe' , 'Baking is my therapy']
-    },{
-    'label': 'fitness',
-    'description': 'Hobbies related to being active and healthy'
-    }],
-  {'task_description': 'Return a classification of the Hobby identified in the text'})
+/*
+{ "label": "travel" }
+*/
