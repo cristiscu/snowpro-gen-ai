@@ -47,8 +47,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         # st.warning(summary)
         sql = f"""select input_text, source_desc,
             VECTOR_COSINE_SIMILARITY(chunk_embedding,
-                SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',
-                    '{summary.replace("'", "''")}')) as dist
+                AI_EMBED('e5-base-v2', '{summary.replace("'", "''")}')) as dist
             from vector_store
             order by dist desc
             limit 1"""

@@ -1,14 +1,14 @@
-SELECT 'This is a wonderful day indeed!' AS txt,
-    SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m-v1.5', txt) AS f,
-    SYSTEM$TYPEOF(f),
-    ARRAY_SIZE(TO_ARRAY(f));
+-- VECTOR Data Type
+use test.public;
 
-SELECT 'This is a wonderful day indeed!' AS txt,
-    SNOWFLAKE.CORTEX.EMBED_TEXT_1024('snowflake-arctic-embed-l-v2.0', txt) AS f,
-    SYSTEM$TYPEOF(f),
-    ARRAY_SIZE(f::ARRAY);
+CREATE OR REPLACE TABLE vectors(a VECTOR(INT, 3), b VECTOR(INT, 3))
+AS SELECT [1, 2, 3]::VECTOR(INT, 3), [1, 1, 1]::VECTOR(INT, 3)
+UNION ALL SELECT [1, 2, 3]::VECTOR(INT, 3), [4, 6, 8]::VECTOR(INT, 3);
 
-SELECT 'This is a wonderful day indeed!' AS txt,
-    AI_EMBED('snowflake-arctic-embed-l-v2.0', txt) AS f,
-    SYSTEM$TYPEOF(f),
-    ARRAY_SIZE(f::ARRAY);
+-- aggregate query
+SELECT VECTOR_SUM(a), VECTOR_AVG(a), VECTOR_MAX(b), VECTOR_MIN(b)
+FROM vectors;
+
+-- VECTOR transformations
+SELECT VECTOR_TRUNCATE(a), VECTOR_NORMALIZE(b)
+FROM vectors;
