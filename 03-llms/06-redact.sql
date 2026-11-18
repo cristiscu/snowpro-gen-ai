@@ -32,3 +32,17 @@ FROM cte;
 "My previous manager, [NAME], used to live in [ADDRESS]. His first name was [NAME]."
 "My name is [NAME] and I live in [ADDRESS]. You can reach me at (415).450.0973"
 */
+
+-- returns detailed error, for unknown category ('ttt')
+-- (use return_error_details => true, as last param for most AI functions)
+WITH cte AS (
+    SELECT 'My previous manager, Washington, used to live in Kirkland. His first name was Mike.' AS txt
+    UNION ALL SELECT 'My name is William and I live in San Francisco. You can reach me at (415).450.0973')
+SELECT AI_REDACT(txt, ['NAME', 'EMAIL', 'ADDRESS', 'ttt'], return_error_details => true) AS redact
+FROM cte;
+/*
+{
+  "value": null,
+  "error": "Unsupported categories: TTT. Supported categories are: ADDRESS, AGE, DATE_OF_BIRTH, DRIVERS_LICENSE, EMAIL, GENDER, IP_ADDRESS, NAME, NATIONAL_ID, PASSPORT, PAYMENT_CARD_DATA, PHONE_NUMBER, TAX_IDENTIFIER."
+}
+*/
