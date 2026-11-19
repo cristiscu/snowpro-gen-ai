@@ -19,6 +19,6 @@ SELECT SNOWFLAKE.CORTEX.COUNT_TOKENS(
 ) AS tokens;
 
 SELECT SNOWFLAKE.CORTEX.COUNT_TOKENS(
-    'llama3.1-70b',
-    'complete'
+    'summarize',
+    'This is a wonderful day indeed!'
 ) AS tokens;
