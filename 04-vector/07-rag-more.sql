@@ -1,7 +1,7 @@
 -- Basic RAG Architecture in Snowflake (with more AI stuff)
 USE test.public;
 
--- AI_PARSE_DOCUMENT (OCR mode) + AI_SENTIMENT + AI_CLASSIFY
+-- AI_PARSE_DOCUMENT (OCR mode) + AI_SENTIMENT + AI_CLASSIFY + AI_TRANSLATE
 CREATE OR REPLACE TEMP TABLE raw_text
 AS SELECT RELATIVE_PATH, SIZE, FILE_URL,
 	BUILD_SCOPED_FILE_URL(@stage1, RELATIVE_PATH) AS url,
@@ -10,20 +10,22 @@ AS SELECT RELATIVE_PATH, SIZE, FILE_URL,
     AI_SENTIMENT(content
         ):categories[0].sentiment::STRING AS mood,
     AI_CLASSIFY(content, ['English', 'French']
-        )['labels'][0]::STRING AS category
+        )['labels'][0]::STRING AS category,
+    IFF(category = 'English', content,
+        AI_TRANSLATE(content, 'fr', 'en')) AS translation
 FROM DIRECTORY(@stage1)
 WHERE RELATIVE_PATH LIKE 'spool/reviews/%.pdf';
 select * from raw_text;
 
 -- SPLIT_TEXT_RECURSIVE_CHARACTER --> chunks + AI_EMBED
 CREATE OR REPLACE TEMP TABLE vector_store
-AS SELECT relative_path, size, file_url, url, mood, category,
+AS SELECT relative_path, size, file_url, url,
     c.value::TEXT AS chunk,
     c.INDEX::INTEGER as chunk_index,
 	AI_EMBED('e5-base-v2', chunk) as chunk_embedding
 from raw_text, LATERAL FLATTEN(
     input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(
-        content, 'none', 30, 10)) c;
+        translation, 'none', 30, 10)) c;
 select * from vector_store;
 
 -- AI_EMBED(question) + VECTOR_COSINE_SIMILARITY to get closest embedding
@@ -35,9 +37,9 @@ ORDER BY dist DESC
 LIMIT 1;
 
 -- similarity compared directly
-SELECT AI_SIMILARITY('reported problems', 'plusieurs problèmes de');
+SELECT AI_SIMILARITY('reported problems', 'several navigation problems,');
 
 -- AI_COMPLETE with returned closest embedding
 SELECT AI_COMPLETE('mistral-7b',
     'There have been some problems reported by my customers at Here We Go? '
-    || 'plusieurs problèmes de');
+    || 'several navigation problems,');
