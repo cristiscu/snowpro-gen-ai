@@ -7,7 +7,7 @@ use test.public;
 -- single-page parsing
 
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'mode': 'LAYOUT'}   -- same for OCR mode (default)
 ) as json;
 /*
@@ -18,7 +18,7 @@ select AI_PARSE_DOCUMENT(
 */
 
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'mode': 'AGENTIC'}
 ) as json;
 /*
@@ -32,7 +32,7 @@ select AI_PARSE_DOCUMENT(
 -- multi-page splitting (page_split)
 
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'mode': 'LAYOUT' , 'page_split': true}  -- same for OCR mode
 ) as json;
 /*
@@ -49,7 +49,7 @@ select AI_PARSE_DOCUMENT(
 */
 
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'mode': 'AGENTIC' , 'page_split': true}
 ) as json;
 /*
@@ -91,7 +91,7 @@ select AI_PARSE_DOCUMENT(
 
 -- second+third pages
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': [{'start': 1, 'end': 3}]}   -- by def OCR
 ) as json;
 /*
@@ -105,7 +105,7 @@ select AI_PARSE_DOCUMENT(
 
 -- first+second+fourth pages
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': [{'end': 4, 'start': 3}, {'start': 0, 'end': 2}]} -- by def OCR
 ) as json;
 /*
@@ -120,7 +120,7 @@ select AI_PARSE_DOCUMENT(
 
 -- same result, but with negative offsets
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': [{'end': 4, 'start': -2}, {'end': -3}]}
 ) as json;
 
@@ -130,7 +130,7 @@ select AI_PARSE_DOCUMENT(
 -- same result
 select AI_PARSE_DOCUMENT(
     FL_FILTER_PAGES(
-        TO_FILE('@stage1', 'spool/multi-page.pdf'),
+        TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
         [{'end': 4, 'start': 3}, {'start': 0, 'end': 2}]),
     {'page_split': TRUE}
 ) as json;
@@ -139,7 +139,7 @@ select AI_PARSE_DOCUMENT(
 select AI_PARSE_DOCUMENT(
     FL_FILTER_PAGES(
         FL_FILTER_PAGES(
-            TO_FILE('@stage1', 'spool/multi-page.pdf'),
+            TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
             [{'end': 4, 'start': 3}]),
         [{'start': 0, 'end': 2}]),
     {'page_split': TRUE}
@@ -147,7 +147,7 @@ select AI_PARSE_DOCUMENT(
 
 -- with AI_EXTRACT --> list of page numbers
 select AI_EXTRACT(
-  file => TO_FILE('@stage1', 'spool/multi-page.pdf'),
+  file => TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
   responseFormat => {
     'schema': {
       'type': 'object',
@@ -167,7 +167,7 @@ select AI_EXTRACT(
 -- with AI_EXTRACT --> for third+fourth pages
 select AI_EXTRACT(
     file => FL_FILTER_PAGES(
-        TO_FILE('@stage1', 'spool/multi-page.pdf'),
+        TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
         [{'start': 2, 'end': 4}]),
       responseFormat => {
     'schema': {
@@ -190,18 +190,18 @@ select AI_EXTRACT(
 
 -- last page (page_split redundant)
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': [{'start': 4}], 'page_split': true}
 ) as json;
 
 -- no page_split (returns nothing)
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': [{'start': 4}], 'page_split': false}
 ) as json;
 
 -- no pages filtered (returns nothing)
 select AI_PARSE_DOCUMENT(
-    TO_FILE('@stage1', 'spool/multi-page.pdf'),
+    TO_FILE('@stage1', 'spool/pages/multi-page.pdf'),
     {'page_filter': []}
 ) as json;

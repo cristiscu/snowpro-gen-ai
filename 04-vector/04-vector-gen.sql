@@ -35,7 +35,7 @@ SELECT AI_MULTI_EMBED(
 -- for video/audio
 SELECT AI_MULTI_EMBED(
     'twelvelabs-marengo-embed-3-0',
-    TO_FILE('@stage1', 'spool/test.mp4')) AS v;
+    TO_FILE('@stage1', 'spool/media/test.mp4')) AS v;
 
 -- ================================================================
 -- legacy (may not work in some accounts)

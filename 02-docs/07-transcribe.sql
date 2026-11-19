@@ -2,14 +2,14 @@
 -- for audio/video staged files (test.MP4/WAV)
 use test.public;
 
-SELECT AI_TRANSCRIBE(TO_FILE('@stage1', 'spool/test.mp4')) as json;
+SELECT AI_TRANSCRIBE(TO_FILE('@stage1', 'spool/media/test.mp4')) as json;
 /*
 {
   "text": "Welcome to practice tests for the SnowPro Specialty GenAI exam.",
   "audio_duration": 7.968
 }*/
 
-SELECT AI_TRANSCRIBE(TO_FILE('@stage1', 'spool/test.wav')) as json;
+SELECT AI_TRANSCRIBE(TO_FILE('@stage1', 'spool/media/test.wav')) as json;
 /*
 {
   "text": "Welcome to practice tests for the SnowPro Specialty GenAI exam.",
@@ -18,7 +18,7 @@ SELECT AI_TRANSCRIBE(TO_FILE('@stage1', 'spool/test.wav')) as json;
 */
 
 SELECT AI_TRANSCRIBE(
-    TO_FILE('@stage1', 'spool/test.wav'),
+    TO_FILE('@stage1', 'spool/media/test.wav'),
     {'timestamp_granularity': 'word'}
 ) as json;
 /*
@@ -34,7 +34,7 @@ SELECT AI_TRANSCRIBE(
 }*/
 
 SELECT AI_TRANSCRIBE(
-    TO_FILE('@stage1', 'spool/test.wav'),
+    TO_FILE('@stage1', 'spool/media/test.wav'),
     {'timestamp_granularity': 'speaker'},
     true
 ) as json;

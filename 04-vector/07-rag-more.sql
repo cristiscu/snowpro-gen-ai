@@ -18,21 +18,21 @@ WHERE RELATIVE_PATH LIKE 'spool/reviews/%.pdf';
 select * from raw_text;
 
 -- SPLIT_TEXT_RECURSIVE_CHARACTER --> chunks + AI_EMBED
-CREATE OR REPLACE TEMP TABLE vector_store
-AS SELECT relative_path, size, file_url, url,
+CREATE OR REPLACE TABLE vector_store_more
+AS SELECT relative_path, size, file_url, url, category,
     c.value::TEXT AS chunk,
     c.INDEX::INTEGER as chunk_index,
 	AI_EMBED('e5-base-v2', chunk) as chunk_embedding
 from raw_text, LATERAL FLATTEN(
     input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(
         translation, 'none', 30, 10)) c;
-select * from vector_store;
+select * from vector_store_more;
 
 -- AI_EMBED(question) + VECTOR_COSINE_SIMILARITY to get closest embedding
 SELECT chunk, VECTOR_COSINE_SIMILARITY(chunk_embedding,
     AI_EMBED('e5-base-v2', 'reported problems')) as dist
-FROM vector_store
--- WHERE category = 'English'
+FROM vector_store_more
+WHERE category = 'English'
 ORDER BY dist DESC
 LIMIT 1;
 

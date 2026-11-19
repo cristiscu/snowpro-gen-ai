@@ -12,7 +12,7 @@ WHERE RELATIVE_PATH LIKE 'spool/reviews/%.pdf';
 select * from raw_text;
 
 -- SPLIT_TEXT_RECURSIVE_CHARACTER --> chunks + AI_EMBED
-CREATE OR REPLACE TEMP TABLE vector_store
+CREATE OR REPLACE TABLE vector_store
 AS SELECT RELATIVE_PATH,
     c.value::TEXT AS chunk,
     c.INDEX::INTEGER as chunk_index,
