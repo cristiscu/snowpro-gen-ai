@@ -12,8 +12,8 @@ SELECT SPLIT_TEXT_RECURSIVE_CHARACTER(
 
 -- with overlap
 SELECT SPLIT_TEXT_RECURSIVE_CHARACTER(
-    '# This is\na wonderful day\n## indeed!',
-    'none', 15, 3) txt;
+    'This is a wonderful day indeed!',
+    'none', 15, 10) txt;
 
 -- overwrite separators 
 SELECT SPLIT_TEXT_RECURSIVE_CHARACTER(

@@ -5,6 +5,9 @@ CREATE OR REPLACE TABLE vectors(a VECTOR(INT, 3), b VECTOR(INT, 3))
 AS SELECT [1, 2, 3]::VECTOR(INT, 3), [1, 1, 1]::VECTOR(INT, 3)
 UNION ALL SELECT [1, 2, 3]::VECTOR(INT, 3), [4, 6, 8]::VECTOR(INT, 3);
 
+SELECT a, b, SYSTEM$TYPEOF(a) type, ARRAY_SIZE(a::ARRAY) size
+FROM vectors;
+
 -- aggregate query
 SELECT VECTOR_SUM(a), VECTOR_AVG(a), VECTOR_MAX(b), VECTOR_MIN(b)
 FROM vectors;

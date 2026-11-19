@@ -7,6 +7,11 @@ SELECT 'This is a wonderful day indeed!' AS txt,
     SYSTEM$TYPEOF(v),
     ARRAY_SIZE(v::ARRAY);
 
+SELECT 'This is a wonderful day indeed!' AS txt,
+    AI_EMBED('snowflake-arctic-embed-m-v1.5', txt) AS v,
+    SYSTEM$TYPEOF(v),
+    ARRAY_SIZE(v::ARRAY);
+
 SELECT AI_EMBED(
         'snowflake-arctic-embed-m-v1.5',
         'This is a wonderful day indeed!') AS v,
@@ -18,7 +23,7 @@ SELECT AI_EMBED(
     TO_FILE('@stage1', 'spool/inspection.png')) AS v;
 
 SELECT 'This is a wonderful day indeed!' AS txt,
-    AI_MULTI_EMBED('snowflake-arctic-embed-l-v2.0', txt) AS v,
+    AI_MULTI_EMBED('twelvelabs-marengo-embed-3-0', txt) AS v,
     SYSTEM$TYPEOF(v),
     ARRAY_SIZE(v::ARRAY);
 
