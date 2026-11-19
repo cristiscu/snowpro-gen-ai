@@ -14,7 +14,11 @@ copy files into @stage1/docs/
     from snow://workspace/USER$CRISTISCU.PUBLIC."snowpro-gen-ai"/versions/head/.docs/;
 list @stage1;
 
-CREATE TEMPORARY TABLE RAW_TEXT
+select * from directory(@stage1);
+alter stage stage1 refresh;
+select * from directory(@stage1);
+
+CREATE OR REPLACE TEMPORARY TABLE raw_text
 AS SELECT RELATIVE_PATH,
 	SIZE,
 	FILE_URL,
@@ -23,6 +27,7 @@ AS SELECT RELATIVE_PATH,
 		TO_FILE('@stage1', RELATIVE_PATH), 
 		{'mode': 'LAYOUT'}):content::STRING AS EXTRACTED_LAYOUT 
 FROM DIRECTORY(@stage1);
+select * from raw_text;
 
 create TABLE vector_store ( 
     RELATIVE_PATH VARCHAR(16777216), -- Relative path to the PDF file
