@@ -2,14 +2,14 @@
 USE test.public;
 
 -- AI_PARSE_DOCUMENT (OCR mode)
-CREATE OR REPLACE TEMP TABLE raw_text
+CREATE OR REPLACE TABLE raw_store
 AS SELECT RELATIVE_PATH,
     AI_PARSE_DOCUMENT(
 		TO_FILE('@stage1', RELATIVE_PATH)
         ):content::STRING AS content
 FROM DIRECTORY(@stage1)
 WHERE RELATIVE_PATH LIKE 'spool/reviews/%.pdf';
-select * from raw_text;
+select * from raw_store;
 
 -- SPLIT_TEXT_RECURSIVE_CHARACTER --> chunks + AI_EMBED
 CREATE OR REPLACE TABLE vector_store
@@ -17,7 +17,7 @@ AS SELECT RELATIVE_PATH,
     c.value::TEXT AS chunk,
     c.INDEX::INTEGER as chunk_index,
 	AI_EMBED('e5-base-v2', chunk) as chunk_embedding
-from raw_text, LATERAL FLATTEN(
+from raw_store, LATERAL FLATTEN(
     input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(
         content, 'none', 30, 10)) c;
 select * from vector_store;

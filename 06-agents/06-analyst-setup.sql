@@ -1,3 +1,4 @@
+-- setup data for Cortex Analyst
 use test.public;
 
 -- (re)create tables & copy data from stage

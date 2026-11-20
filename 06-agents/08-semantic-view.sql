@@ -1,4 +1,4 @@
--- SEMANTIC_VIEW
+-- create Semantic Views
 -- https://docs.snowflake.com/en/sql-reference/constructs/semantic_view
 use test.public;
 
